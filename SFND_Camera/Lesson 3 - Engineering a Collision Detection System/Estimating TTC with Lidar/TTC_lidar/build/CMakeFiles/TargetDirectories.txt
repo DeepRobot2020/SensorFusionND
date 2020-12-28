@@ -1,0 +1,3 @@
+/home/jzhang/github/SensorFusionND/SFND_Camera/Lesson 3 - Engineering a Collision Detection System/Estimating TTC with Lidar/TTC_lidar/build/CMakeFiles/rebuild_cache.dir
+/home/jzhang/github/SensorFusionND/SFND_Camera/Lesson 3 - Engineering a Collision Detection System/Estimating TTC with Lidar/TTC_lidar/build/CMakeFiles/edit_cache.dir
+/home/jzhang/github/SensorFusionND/SFND_Camera/Lesson 3 - Engineering a Collision Detection System/Estimating TTC with Lidar/TTC_lidar/build/CMakeFiles/compute_ttc_lidar.dir
