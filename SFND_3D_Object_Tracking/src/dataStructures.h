@@ -25,9 +25,10 @@ struct BoundingBox { // bounding box around a classified object (contains both 2
 };
 
 struct DataFrame { // represents the available sensor information at the same time instance
-    
+    uint32_t image_id;
     cv::Mat cameraImg; // camera image
-    
+    cv::Mat maskImg; // mask image
+
     std::vector<cv::KeyPoint> keypoints; // 2D keypoints within camera image
     cv::Mat descriptors; // keypoint descriptors
     std::vector<cv::DMatch> kptMatches; // keypoint matches between previous and current frame
