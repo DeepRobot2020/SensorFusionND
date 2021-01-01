@@ -202,12 +202,12 @@ void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPo
         return;
     }
 
-    // compute camera-based TTC from distance ratios
-    double meanDistRatio = std::accumulate(distRatios.begin(), distRatios.end(), 0.0) / distRatios.size();
+    std::sort(distRatios.begin(), distRatios.end());
+    long medIndex = floor(distRatios.size() / 2.0);
+    double medDistRatio = distRatios.size() % 2 == 0 ? (distRatios[medIndex - 1] + distRatios[medIndex]) / 2.0 : distRatios[medIndex]; // compute median dist. ratio to remove outlier influence
 
     double dT = 1 / frameRate;
-    TTC = -dT / (1 - meanDistRatio);
-
+    TTC = -dT / (1 - medDistRatio);
 }
 
 
@@ -217,18 +217,36 @@ void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
     // auxiliary variables
     double dT = 1.0 / frameRate; // time between two measurements in seconds
 
-    // find closest distance to Lidar points 
-    double minXPrev = 1e9, minXCurr = 1e9;
-    for(auto it=lidarPointsPrev.begin(); it!=lidarPointsPrev.end(); ++it) {
-        minXPrev = minXPrev>it->x ? it->x : minXPrev;
+    std::sort(lidarPointsPrev.begin(), lidarPointsPrev.end(), [&](LidarPoint &l, LidarPoint &r)
+    {
+        return l.x < r.x;
+    });
+     std::sort(lidarPointsCurr.begin(), lidarPointsCurr.end(), [&](LidarPoint &l, LidarPoint &r)
+    {
+        return l.x < r.x;
+    });
+    
+    double xPrev = 0, xCurr = 0;
+    if(lidarPointsPrev.size() % 2) 
+    {
+        xPrev = lidarPointsPrev[lidarPointsPrev.size()  / 2].x;
+    }
+    else
+    {
+        xPrev = (lidarPointsPrev[lidarPointsPrev.size()  / 2].x + lidarPointsPrev[lidarPointsPrev.size()  / 2 - 1].x) / 2.0;
     }
 
-    for(auto it=lidarPointsCurr.begin(); it!=lidarPointsCurr.end(); ++it) {
-        minXCurr = minXCurr>it->x ? it->x : minXCurr;
+    if(lidarPointsCurr.size() % 2) 
+    {
+        xCurr = lidarPointsCurr[lidarPointsCurr.size()  / 2].x;
+    }
+    else
+    {
+        xCurr = (lidarPointsCurr[lidarPointsCurr.size()  / 2].x + lidarPointsCurr[lidarPointsCurr.size()  / 2 - 1].x) / 2.0;
     }
 
     // compute TTC from both measurements
-    TTC = minXCurr * dT / (minXPrev-minXCurr);
+    TTC = xCurr * dT / (xPrev - xCurr);
 }
 
 
