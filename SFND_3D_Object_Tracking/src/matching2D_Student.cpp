@@ -14,15 +14,25 @@ void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource,
                       std::string matcherType, 
                       std::string selectorType)
 {
+    std::cout << kPtsSource.size() << "\n";
+    std::cout << kPtsRef.size() << "\n";
+    std::cout << descSource.size() << "\n";
+    std::cout << descRef.size() << "\n";
+
     // configure matcher
     bool crossCheck = false;
     cv::Ptr<cv::DescriptorMatcher> matcher;
-    int normType;
 
-    if(descriptorType.compare("DES_BINARY") == 0)
+    int normType = cv::NORM_L2;
+
+    if(descriptorType.compare("ORB") == 0 ||
+       descriptorType.compare("BRIEF") == 0 ||
+       descriptorType.compare("BRISK") == 0 || 
+       descriptorType.compare("FREAK") == 0)
+    {
         normType = cv::NORM_HAMMING;
-    else 
-        normType = cv::NORM_L2;
+    }
+
 
     if (matcherType.compare("MAT_BF") == 0)
     {
@@ -135,7 +145,7 @@ void detKeypointsShiTomasi(vector<cv::KeyPoint> &keypoints, cv::Mat &img)
     double minDistance = (1.0 - maxOverlap) * blockSize;
     int maxCorners = img.rows * img.cols / max(1.0, minDistance); // max. num. of keypoints
 
-    double qualityLevel = 0.01; // minimal accepted quality of image corners
+    double qualityLevel = 0.001; // minimal accepted quality of image corners
     double k = 0.04;
 
     // Apply corner detection
@@ -163,7 +173,7 @@ void detKeypointsHarris(vector<cv::KeyPoint> &keypoints, cv::Mat &img)
     cv::Mat dst = cv::Mat::zeros( img.size(), CV_32FC1 );
     cv::cornerHarris(img, dst, blockSize, apertureSize, k );
 
-    int thresh = 150;
+    int thresh = 90;
     Mat dst_norm, dst_norm_scaled;
     normalize( dst, dst_norm, 0, 255, NORM_MINMAX, CV_32FC1, Mat() );
     
